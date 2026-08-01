@@ -112,7 +112,7 @@ Ensure you have Node.js (v18+ or recommended LTS version) set up inside your loc
 
 ### 1. Initialize & Clone Repository
 ```bash
-git clone https://github.com
+git clone https://github.com/nasirulwebdev/bafaf-green-farm
 cd bafaf-green-farm
 ```
 
