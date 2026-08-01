@@ -15,7 +15,7 @@ import ContactForm from '../../Components/Contact/ContactForm';
 import ContactMap from '../../Components/Contact/ContactMap';
 
 // হিরো ব্যানারের সুন্দর সবুজাভ ব্যাকগ্রাউন্ড ছবি ইমপোর্ট (আপনার এসেট পাথ অনুযায়ী)
-import contactHeroBg from '../../Assets/Images/Contact/contact-hero-bg.jpg';
+import contactHeroBg from '../../assets/Images/Contact/contact-hero-bg.jpg';
 
 export default function Contact() {
   // আন্তর্জাতিক কর্পোরেট স্ট্যান্ডার্ড অনুযায়ী পেজ ভিউ ট্র্যাকার এবং স্ক্রিন টপ-রিসেট হুক
