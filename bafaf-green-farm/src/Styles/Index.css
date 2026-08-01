@@ -1,3 +1,8 @@
+/* ===========================
+   Google Font
+=========================== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
 @import "tailwindcss";
 @plugin "daisyui";
 
@@ -5,10 +10,7 @@
 @import "./Animation.css";
 @import "./Responsive.css";
 
-/* ===========================
-   Google Font
-=========================== */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
 
 /* ===========================
    Reset CSS
