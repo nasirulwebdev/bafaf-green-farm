@@ -1,0 +1,31 @@
+@plugin "daisyui/theme" {
+
+    name: "bafaf";
+
+    default: true;
+
+    --color-primary: #15803d;
+    --color-primary-content: #ffffff;
+
+    --color-secondary: #166534;
+    --color-secondary-content: #ffffff;
+
+    --color-accent: #84cc16;
+    --color-accent-content: #1f2937;
+
+    --color-neutral: #111827;
+    --color-neutral-content: #ffffff;
+
+    --color-base-100: #ffffff;
+    --color-base-200: #f8fafc;
+    --color-base-300: #e2e8f0;
+
+    --color-info: #0ea5e9;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+
+    --radius-selector: 12px;
+    --radius-field: 12px;
+    --radius-box: 12px;
+}
