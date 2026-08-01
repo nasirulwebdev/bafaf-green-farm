@@ -1,11 +1,13 @@
 /*
 ===========================================
-Component Name : Navbar
+File Path      : Src/Components/Navbar/Navbar.jsx
+Component Name : Navbar (Part 01 - Active Wishlist Fixed)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
 */
 
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { 
   FaPhoneAlt, 
@@ -16,9 +18,11 @@ import {
   FaWhatsapp, 
   FaInstagram, 
   FaLinkedinIn, 
-  FaSearch 
+  FaSearch,
+  FaShoppingCart 
 } from "react-icons/fa";
 
+import { useApp } from "../../Context/AppContext";
 import Logo from "./Logo";
 import DesktopMenu from "./DesktopMenu";
 import CTAButton from "./CTAButton";
@@ -33,21 +37,20 @@ import WishlistButton from "./WishlistButton";
 import SearchModal from "./SearchModal";
 
 function Navbar() {
+  const { cart, wishlist } = useApp();
+  const navigate = useNavigate(); 
   const [isSticky, setIsSticky] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // ★ Wishlist Count State (প্রয়োজনে আপনি পরে Context API/Redux দিয়ে যুক্ত করতে পারবেন)
-  const [wishlistCount, setWishlistCount] = useState(3);
-
-  // ★ Social Links Data (এখানে আপনার পেজ/প্রোফাইলের আসল ইউআরএল বসিয়ে দিন)
+  // Social Links Data
   const socialLinks = [
-    { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/mdnasirulislam.nahid.1" },
-    { name: "Twitter", icon: <FaTwitter />, url: "https://www.twitter.com/yourprofile" },
-    { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/md_nasirul_islam_/" },
-    { name: "LinkedIn", icon: <FaLinkedinIn />, url: "https://www.linkedin.com/in/md-nasirul-islam-nahid-8a1b49287" },
-    { name: "YouTube", icon: <FaYoutube />, url: "https://www.youtube.com/@GreenWorld-gy9dkFavoriite/featured" },
-    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://web.whatsapp.com/" }
+    { name: "Facebook", icon: <FaFacebookF />, url: "https://facebook.com" },
+    { name: "Twitter", icon: <FaTwitter />, url: "https://twitter.com" },
+    { name: "Instagram", icon: <FaInstagram />, url: "https://instagram.com" },
+    { name: "LinkedIn", icon: <FaLinkedinIn />, url: "https://linkedin.com" },
+    { name: "YouTube", icon: <FaYoutube />, url: "https://youtube.com" },
+    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://whatsapp.com" }
   ];
 
   // Sticky header scroll listener
@@ -55,11 +58,8 @@ function Navbar() {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Lock scroll on mobile menu
@@ -69,22 +69,23 @@ function Navbar() {
     } else {
       document.body.style.overflow = "auto";
     }
-
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [mobileMenuOpen]);
 
-  // Wishlist এ ক্লিক করলে যা হবে
+  // 🟢 উইশলিস্ট আইকন ক্লিকে উইশলিস্ট ডিটেইলস পেইজে নিয়ে যাওয়ার লজিক যুক্ত করা হলো
   const handleWishlistClick = () => {
-    console.log("Wishlist Clicked!");
-    // উদাহরণস্বরূপ: উইশলিস্ট পেজে রিডাইরেক্ট করতে পারেন
-    // window.location.href = "/wishlist";
+    navigate("/wishlist");
   };
+
+  const handleCartClick = () => {
+    navigate("/cart"); 
+  };
+
 
   return (
     <>
-      {/* fixed top-0 সরিয়ে sticky top-0 করে দিন */}
       <header className="sticky top-0 left-0 w-full z-[999] transition-all duration-300">
         
         {/* ==================== 1. TOP BAR ==================== */}
@@ -101,7 +102,7 @@ function Navbar() {
                 <span>info@bafafgreenfarm.com</span>
               </a>
               <a 
-                href="tel:+8801700000000" 
+                href="tel:+8801750909833" 
                 className="flex items-center gap-2 hover:text-[#A3D13A] transition-colors"
               >
                 <FaPhoneAlt className="text-[#A3D13A]" />
@@ -109,12 +110,10 @@ function Navbar() {
               </a>
             </div>
 
-            {/* Top Bar Right: Currency, Active Socials, Active Wishlist, Profile */}
+            {/* Top Bar Right: Currency, Socials, Wishlist & Profile */}
             <div className="flex items-center gap-5">
-              {/* Currency Dropdown */}
               <CurrencyDropdown />
 
-              {/* ★ Active Social Links */}
               <div className="flex items-center gap-3 border-l border-r border-white/10 px-4">
                 {socialLinks.map((social) => (
                   <a
@@ -130,9 +129,8 @@ function Navbar() {
                 ))}
               </div>
 
-              {/* ★ Active Wishlist, Notifications & Profile */}
               <div className="flex items-center gap-3">
-                <WishlistButton count={wishlistCount} onClick={handleWishlistClick} />
+                <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
                 <NotificationDropdown />
                 <ProfileDropdown />
               </div>
@@ -147,24 +145,12 @@ function Navbar() {
             w-full
             transition-all
             duration-300
-            ${
-              isSticky
-                ? "bg-[#0B7A3E]/95 backdrop-blur-xl shadow-2xl"
-                : "bg-[#0B7A3E]"
-            }
+            ${isSticky ? "bg-[#0B7A3E]/95 backdrop-blur-xl shadow-2xl" : "bg-[#0B7A3E]"}
           `}
         >
           <div className="max-w-[1320px] mx-auto px-5 xl:px-0">
-            <div
-              className={`
-                flex
-                items-center
-                justify-between
-                transition-all
-                duration-300
-                ${isSticky ? "h-[75px]" : "h-[85px]"}
-              `}
-            >
+            <div className={`flex items-center justify-between transition-all duration-300 ${isSticky ? "h-[75px]" : "h-[85px]"}`}>
+              
               {/* Logo */}
               <Logo />
 
@@ -173,8 +159,25 @@ function Navbar() {
                 <DesktopMenu />
               </div>
 
-              {/* Desktop CTA & Search */}
+              {/* Desktop CTA, Search & Shopping Cart */}
               <div className="hidden lg:flex items-center gap-4">
+                
+                {/* 🛒 SEARCH BAR-এর ঠিক সামনে শপিং কার্ট বাটন যুক্ত করা হলো */}
+                <button
+                  type="button"
+                  onClick={handleCartClick}
+                  className="relative p-2.5 rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer group"
+                  aria-label="Cart"
+                >
+                  <FaShoppingCart className="text-base group-hover:scale-110 transition-transform" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Search Button */}
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
@@ -189,6 +192,22 @@ function Navbar() {
 
               {/* Mobile Actions & Hamburger */}
               <div className="flex items-center gap-3 lg:hidden">
+                
+                {/* Mobile Shopping Cart */}
+                <button
+                  type="button"
+                  onClick={handleCartClick}
+                  className="relative p-2 rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
+                  aria-label="Cart"
+                >
+                  <FaShoppingCart className="text-lg" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[9px] font-extrabold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-md">
+                      {cart.length}
+                    </span>
+                  )}
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
@@ -199,7 +218,7 @@ function Navbar() {
                 </button>
 
                 {/* Mobile Active Wishlist */}
-                <WishlistButton count={wishlistCount} onClick={handleWishlistClick} />
+                <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
 
                 <HamburgerButton
                   isOpen={mobileMenuOpen}

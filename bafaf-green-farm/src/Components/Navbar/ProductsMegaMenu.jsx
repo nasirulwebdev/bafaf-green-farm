@@ -1,7 +1,7 @@
 /*
 ===========================================
 File Path      : Src/Components/Navbar/ProductsMegaMenu.jsx
-Component Name : ProductsMegaMenu
+Component Name : ProductsMegaMenu (Part 01 - Fixed Images)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
@@ -13,55 +13,69 @@ import {
   FaSeedling, 
   FaAppleAlt, 
   FaChevronRight, 
-  FaAward 
+  FaAward,
+  FaShoppingCart,
+  FaHeart,
+  FaWhatsapp
 } from "react-icons/fa";
+import { useApp } from "@/Context/AppContext";
+
+// 🟢 কার্ট পেজের জন্য আপনার সচল অ্যাসেট পাথ থেকে মেইন ব্যাকআপ ছবিগুলো ইমপোর্ট করা হলো
+import fishImg from "@/assets/Images/Services/fish-farming.jpg";
+import riceImg from "@/assets/Images/Services/rice-production.jpg";
+import agroImg from "@/assets/Images/Services/water-testing.jpg";
 
 function ProductsMegaMenu({ closeMenu }) {
-  // আপনার আসল মডেলের ডিজাইন ও আইকন অক্ষুণ্ণ রেখে ২৪টি ডাইনামিক প্রোডাক্ট লিংকআপ করা হলো
+  const { addToCart, toggleWishlist, wishToFriend, wishlist } = useApp();
+
   const categories = [
     {
       title: "Fish Culture & Fisheries",
       slug: "fisheries",
+      image: fishImg, // ক্যাটাগরি লেভেলে সরাসরি ছবি সেট করা হলো
       icon: <FaFish className="text-[#0B7A3E] text-lg" />,
       items: [
-        { name: "Freshwater Fish", path: "/products/freshwater-fish", badge: "Popular" },
-        { name: "Live & Hatchery Fish", path: "/products/live-hatchery-fish" },
-        { name: "Frozen & Export Quality", path: "/products/frozen-export-quality" },
-        { name: "Feed & Supplements", path: "/products/feed-supplements" },
-        { name: "Premium Shrimp & Prawn", path: "/products/shrimp-prawn-culture" },
-        { name: "High-Grade Fish Seed", path: "/products/high-grade-fish-seed" },
-        { name: "Ornamental Aquarium Fish", path: "/products/ornamental-aquarium-fish" },
-        { name: "Organic Dried Fish (Shutki)", path: "/products/organic-dried-fish" },
+        { id: "p1", name: "Freshwater Fish", path: "/products/freshwater-fish", badge: "Popular" },
+        { id: "p2", name: "Live & Hatchery Fish", path: "/products/live-hatchery-fish" },
+        { id: "p3", name: "Frozen & Export Quality", path: "/products/frozen-export-quality" },
+        { id: "p4", name: "Feed & Supplements", path: "/products/feed-supplements" },
+        { id: "p5", name: "Premium Shrimp & Prawn", path: "/products/shrimp-prawn-culture" },
+        { id: "p6", name: "High-Grade Fish Seed", path: "/products/high-grade-fish-seed" },
+        { id: "p7", name: "Ornamental Aquarium Fish", path: "/products/ornamental-aquarium-fish" },
+        { id: "p8", name: "Organic Dried Fish (Shutki)", path: "/products/organic-dried-fish" },
       ],
     },
     {
       title: "Crops & Grains",
       slug: "rice",
+      image: riceImg, // ক্যাটাগরি লেভেলে সরাসরি ছবি সেট করা হলো
       icon: <FaAppleAlt className="text-[#0B7A3E] text-lg" />,
       items: [
-        { name: "Aromatic Rice", path: "/products/aromatic-rice", badge: "Fresh Harvest" },
-        { name: "Organic Vegetables", path: "/products/organic-vegetables" },
-        { name: "Seasonal Fruits", path: "/products/seasonal-fruits" },
-        { name: "High-Yield Seeds", path: "/products/high-yield-seeds" },
-        { name: "Organic Whole Wheat", path: "/products/organic-whole-wheat" },
-        { name: "Premium Pulses & Lentils", path: "/products/premium-pulses" },
-        { name: "Cold-Pressed Mustard Oil", path: "/products/pure-mustard-oil" },
-        { name: "Organic Farm Spices", path: "/products/organic-farm-spices" },
+        { id: "p9", name: "Aromatic Rice", path: "/products/aromatic-rice", badge: "Fresh Harvest" },
+        { id: "p10", name: "Organic Vegetables", path: "/products/organic-vegetables" },
+        { id: "p11", name: "Seasonal Fruits", path: "/products/seasonal-fruits" },
+        { id: "p12", name: "High-Yield Seeds", path: "/products/high-yield-seeds" },
+        { id: "p13", name: "Organic Whole Wheat", path: "/products/organic-whole-wheat" },
+        { id: "p14", name: "Premium Pulses & Lentils", path: "/products/premium-pulses" },
+        { id: "p15", name: "Cold-Pressed Mustard Oil", path: "/products/pure-mustard-oil" },
+        { id: "p16", name: "Organic Farm Spices", path: "/products/organic-farm-spices" },
       ],
     },
+
     {
       title: "Agro & Bio Products",
       slug: "agro",
+      image: agroImg, // ক্যাটাগরি লেভেলে সরাসরি ছবি সেট করা হলো
       icon: <FaSeedling className="text-[#0B7A3E] text-lg" />,
       items: [
-        { name: "100% Organic Products", path: "/products/100-organic-products", badge: "Pure" },
-        { name: "Organic Fertilizers", path: "/products/organic-fertilizers" },
-        { name: "Bio-Pesticides", path: "/products/bio-pesticides" },
-        { name: "Farm Machinery & Tools", path: "/products/farm-machinery-tools" },
-        { name: "Premium Bio-Compost", path: "/products/premium-bio-compost" },
-        { name: "Pure Neem Oil Spray", path: "/products/pure-neem-oil" },
-        { name: "Bio Plant Nutrients", path: "/products/bio-plant-nutrients" },
-        { name: "Premium Coco Peat Blocks", path: "/products/premium-coco-peat" },
+        { id: "p17", name: "100% Organic Products", path: "/products/100-organic-products", badge: "Pure" },
+        { id: "p18", name: "Organic Fertilizers", path: "/products/organic-fertilizers" },
+        { id: "p19", name: "Bio-Pesticides", path: "/products/bio-pesticides" },
+        { id: "p20", name: "Farm Machinery & Tools", path: "/products/farm-machinery-tools" },
+        { id: "p21", name: "Premium Bio-Compost", path: "/products/premium-bio-compost" },
+        { id: "p22", name: "Pure Neem Oil Spray", path: "/products/pure-neem-oil" },
+        { id: "p23", name: "Bio Plant Nutrients", path: "/products/bio-plant-nutrients" },
+        { id: "p24", name: "Premium Coco Peat Blocks", path: "/products/premium-coco-peat" },
       ],
     },
   ];
@@ -72,7 +86,6 @@ function ProductsMegaMenu({ closeMenu }) {
       <div className="col-span-8 grid grid-cols-3 gap-6">
         {categories.map((cat, idx) => (
           <div key={idx} className="flex flex-col gap-3">
-            {/* Category Header - এখন এটিও ক্লিকেবল এবং মেইন প্রোডাক্ট পেজের ট্যাব ওপেন করবে */}
             <Link 
               to={`/products?tab=${cat.slug}`}
               onClick={closeMenu}
@@ -86,28 +99,57 @@ function ProductsMegaMenu({ closeMenu }) {
               </h4>
             </Link>
 
-            {/* Sub Items - ২৪টি ডাটা গ্রিড স্ট্রাকচারকে স্ট্যাবল রাখতে স্ক্রোলবার কন্ট্রোল অ্যাড করা হলো */}
             <ul className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1 scrollbar-thin">
-              {cat.items.map((sub, sIdx) => (
-                <li key={sIdx}>
-                  <Link
-                    to={sub.path}
-                    onClick={closeMenu}
-                    className="group flex items-center justify-between py-1.5 px-2 rounded-lg text-[13px] font-medium text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-all duration-200"
-                  >
-                    <span className="flex items-center gap-2 truncate">
+              {cat.items.map((sub, sIdx) => {
+                const isWishlisted = wishlist.some((w) => w.id === sub.id);
+                return (
+                  <li key={sIdx} className="group relative flex items-center justify-between py-1.5 px-2 rounded-lg text-[13px] font-medium text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-all duration-200">
+                    <Link
+                      to={sub.path}
+                      onClick={closeMenu}
+                      className="flex items-center gap-2 truncate flex-1"
+                    >
                       <span className="w-1.5 h-1.5 rounded-full bg-gray-300 group-hover:bg-[#A3D13A] transition-colors shrink-0" />
                       <span className="truncate">{sub.name}</span>
-                    </span>
+                    </Link>
 
-                    {sub.badge && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#A3D13A]/20 text-[#0B7A3E] group-hover:bg-[#0B7A3E] group-hover:text-white transition-colors shrink-0">
-                        {sub.badge}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
+                    <div className="flex items-center gap-1.5 ml-2">
+                      {sub.badge && !isWishlisted && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#A3D13A]/20 text-[#0B7A3E] shrink-0">
+                          {sub.badge}
+                        </span>
+                      )}
+                      
+                      {/* Cart Action: 🟢 সরাসরি cat.image পাস করা হলো যা আপনার লোকাল অ্যাসেট ইমেজ লোড করবে */}
+                      <button 
+                        onClick={() => addToCart({ id: sub.id, name: sub.name, path: sub.path, image: cat.image })}
+                        title="Add to Cart"
+                        className="p-1 text-gray-400 hover:text-[#0B7A3E] rounded transition-colors cursor-pointer"
+                      >
+                        <FaShoppingCart className="text-xs" />
+                      </button>
+
+                      {/* Toggle Wishlist */}
+                      <button 
+                        onClick={() => toggleWishlist({ id: sub.id, name: sub.name, path: sub.path, image: cat.image })}
+                        title="Add to My Wishlist"
+                        className={`p-1 rounded transition-colors cursor-pointer ${isWishlisted ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
+                      >
+                        <FaHeart className="text-xs" />
+                      </button>
+
+                      {/* Wish to Friend via WhatsApp */}
+                      <button 
+                        onClick={() => wishToFriend({ id: sub.id, name: sub.name, path: sub.path }, "whatsapp")}
+                        title="Wish to a Friend"
+                        className="p-1 text-gray-400 hover:text-green-500 rounded transition-colors cursor-pointer"
+                      >
+                        <FaWhatsapp className="text-xs" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

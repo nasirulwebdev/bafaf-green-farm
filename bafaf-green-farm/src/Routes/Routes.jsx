@@ -14,6 +14,8 @@ import GalleryDetails from "@/Pages/Gallery/GalleryDetails";
 import FAQ from "@/Pages/FAQ/FAQ";
 import Contact from "@/Pages/Contact/Contact";
 import NotFound from "@/Pages/NotFound/NotFound";
+import CartDetails from "../Pages/Cart/CartDetails";
+import WishlistDetails from "../Pages/Wishlist/WishlistDetails";
 
 function AppRoutes() {
     return (
@@ -39,6 +41,9 @@ function AppRoutes() {
                 <Route path="faq" element={<FAQ />} />
 
                 <Route path="contact" element={<Contact />} />
+
+                <Route path="cart" element={<CartDetails />} />
+                <Route path="wishlist" element={<WishlistDetails />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
