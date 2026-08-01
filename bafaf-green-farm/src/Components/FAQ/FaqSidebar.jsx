@@ -48,8 +48,8 @@ export default function FaqSidebar() {
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2 group hover:border-[#0B7A3E] transition-all duration-300">
         <h4 className="font-bold text-gray-900 text-[14px]">Need Help Now?</h4>
         <p className="text-[11px] text-gray-400 font-semibold leading-relaxed">Call our support team for immediate assistance.</p>
-        <a href="tel:+8801777999222" className="text-base font-black text-[#0B7A3E] tracking-tight hover:text-[#A3D13A] transition-colors flex items-center gap-2 mt-1">
-          <FaPhoneAlt className="text-xs animate-bounce text-[#0B7A3E]" /> +880 1777-999222
+        <a href="tel:+8801750909833" className="text-base font-black text-[#0B7A3E] tracking-tight hover:text-[#A3D13A] transition-colors flex items-center gap-2 mt-1">
+          <FaPhoneAlt className="text-xs animate-bounce text-[#0B7A3E]" /> +880 1750-909833
         </a>
         <p className="text-[10px] text-gray-400 font-bold flex items-center gap-1.5 mt-0.5">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-ping" /> Available 24/7
