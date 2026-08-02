@@ -110,7 +110,6 @@ function Navbar() {
                 <span>+880 1750909833</span>
               </a>
             </div>
-
             {/* Top Bar Right: Currency, Socials, Wishlist & Profile */}
             <div className="flex items-center gap-5">
               <CurrencyDropdown />
@@ -134,7 +133,7 @@ function Navbar() {
                 <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
                 <NotificationDropdown />
                 
-                {/* 🟢 CONDITIONAL TOP BAR RENDER: ইউজার স্টেট অনুযায়ী বোতাম সিঙ্ক */}
+                {/* CONDITIONAL TOP BAR RENDER: Sync user state */}
                 {user ? (
                   <ProfileDropdown />
                 ) : (
@@ -175,7 +174,7 @@ function Navbar() {
               {/* Desktop CTA, Search & Shopping Cart */}
               <div className="hidden lg:flex items-center gap-4">
                 
-                {/* SEARCH BAR-এর ঠিক সামনে শপিং কার্ট বাটন যুক্ত করা হলো */}
+                {/* Shopping Cart Button */}
                 <button
                   type="button"
                   onClick={handleCartClick}
@@ -200,7 +199,7 @@ function Navbar() {
                   <FaSearch className="text-base" />
                 </button>
 
-                {/* 🟢 CONDITIONAL MAIN NAVBAR RENDER */}
+                {/* CONDITIONAL MAIN NAVBAR RENDER */}
                 {user ? (
                   <div className="hidden md:block lg:hidden">
                     <ProfileDropdown />
@@ -210,7 +209,7 @@ function Navbar() {
                 )}
               </div>
 
-              {/* Mobile Actions & Hamburger */}
+              {/* ==================== 3. MOBILE ACTIONS & HAMBURGER ==================== */}
               <div className="flex items-center gap-3 lg:hidden">
                 
                 {/* Mobile Shopping Cart */}
@@ -228,6 +227,7 @@ function Navbar() {
                   )}
                 </button>
 
+                {/* Mobile Search */}
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
@@ -240,36 +240,42 @@ function Navbar() {
                 {/* Mobile Active Wishlist */}
                 <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
 
-                {/* 🟢 Mobile Profile Icon Status */}
+                {/* Mobile Profile Icon Status */}
                 {user && (
                   <div className="scale-90">
                     <ProfileDropdown />
                   </div>
                 )}
 
+                {/* Hamburger Trigger Button */}
                 <HamburgerButton
                   isOpen={mobileMenuOpen}
                   setIsOpen={setMobileMenuOpen}
                 />
               </div>
+
             </div>
           </div>
 
           {/* Bottom Accent Line */}
           <div className="h-[3px] bg-gradient-to-r from-[#A3D13A] via-[#C6E86C] to-[#A3D13A]" />
         </div>
-
       </header>
 
-    {/* Mobile Drawer Menu */}
-    <MobileMenu
-    isOpen={mobileMenuOpen}
-    onClose={() => setMobileMenuOpen(false)}/>
-    {/* Global Search Modal */}
-    <SearchModal
-    isOpen={isSearchOpen}
-    onClose={() => setIsSearchOpen(false)}/>
-    </>);}
-    
-    
-    export default Navbar;
+      {/* ==================== 4. GLOBAL INJECTIONS (OUTSIDE HEADER) ==================== */}
+      {/* FIXED: Passed correct prop 'setIsOpen' matching MobileMenu.jsx expectations */}
+      <MobileMenu
+        isOpen={mobileMenuOpen}
+        setIsOpen={setMobileMenuOpen}
+      />
+
+      {/* Global Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
+    </>
+  );
+}
+
+export default Navbar;
