@@ -1,11 +1,13 @@
 /*
 ===========================================
-Component Name : Navbar
+File Path      : Src/Components/Navbar/Navbar.jsx
+Component Name : Navbar (Auth State Integrated)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
 */
 
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { 
   FaPhoneAlt, 
@@ -16,9 +18,13 @@ import {
   FaWhatsapp, 
   FaInstagram, 
   FaLinkedinIn, 
-  FaSearch 
+  FaSearch,
+  FaShoppingCart,
+  FaSignInAlt 
 } from "react-icons/fa";
 
+import { useApp } from "../../Context/AppContext";
+import { useAuth } from "../../Context/AuthContext"; // 🟢 গ্লোবাল ফায়ারবেস অথ হুক ইমপোর্ট করা হলো
 import Logo from "./Logo";
 import DesktopMenu from "./DesktopMenu";
 import CTAButton from "./CTAButton";
@@ -33,21 +39,21 @@ import WishlistButton from "./WishlistButton";
 import SearchModal from "./SearchModal";
 
 function Navbar() {
+  const { cart, wishlist } = useApp();
+  const { user } = useAuth(); // 🟢 ফায়ারবেস ইউজার লাইভ স্টেট অবজেক্ট কল করা হলো
+  const navigate = useNavigate(); 
   const [isSticky, setIsSticky] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // ★ Wishlist Count State (প্রয়োজনে আপনি পরে Context API/Redux দিয়ে যুক্ত করতে পারবেন)
-  const [wishlistCount, setWishlistCount] = useState(3);
-
-  // ★ Social Links Data (এখানে আপনার পেজ/প্রোফাইলের আসল ইউআরএল বসিয়ে দিন)
+  // Social Links Data
   const socialLinks = [
-    { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/mdnasirulislam.nahid.1" },
-    { name: "Twitter", icon: <FaTwitter />, url: "https://www.twitter.com/yourprofile" },
-    { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/md_nasirul_islam_/" },
-    { name: "LinkedIn", icon: <FaLinkedinIn />, url: "https://www.linkedin.com/in/md-nasirul-islam-nahid-8a1b49287" },
-    { name: "YouTube", icon: <FaYoutube />, url: "https://www.youtube.com/@GreenWorld-gy9dkFavoriite/featured" },
-    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://web.whatsapp.com/" }
+    { name: "Facebook", icon: <FaFacebookF />, url: "https://facebook.com" },
+    { name: "Twitter", icon: <FaTwitter />, url: "https://twitter.com" },
+    { name: "Instagram", icon: <FaInstagram />, url: "https://instagram.com" },
+    { name: "LinkedIn", icon: <FaLinkedinIn />, url: "https://linkedin.com" },
+    { name: "YouTube", icon: <FaYoutube />, url: "https://youtube.com" },
+    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://whatsapp.com" }
   ];
 
   // Sticky header scroll listener
@@ -55,11 +61,8 @@ function Navbar() {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Lock scroll on mobile menu
@@ -69,22 +72,21 @@ function Navbar() {
     } else {
       document.body.style.overflow = "auto";
     }
-
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [mobileMenuOpen]);
 
-  // Wishlist এ ক্লিক করলে যা হবে
   const handleWishlistClick = () => {
-    console.log("Wishlist Clicked!");
-    // উদাহরণস্বরূপ: উইশলিস্ট পেজে রিডাইরেক্ট করতে পারেন
-    // window.location.href = "/wishlist";
+    navigate("/wishlist");
+  };
+
+  const handleCartClick = () => {
+    navigate("/cart"); 
   };
 
   return (
     <>
-      {/* fixed top-0 সরিয়ে sticky top-0 করে দিন */}
       <header className="sticky top-0 left-0 w-full z-[999] transition-all duration-300">
         
         {/* ==================== 1. TOP BAR ==================== */}
@@ -101,20 +103,17 @@ function Navbar() {
                 <span>info@bafafgreenfarm.com</span>
               </a>
               <a 
-                href="tel:+8801700000000" 
+                href="tel:+8801750909833" 
                 className="flex items-center gap-2 hover:text-[#A3D13A] transition-colors"
               >
                 <FaPhoneAlt className="text-[#A3D13A]" />
                 <span>+880 1750909833</span>
               </a>
             </div>
-
-            {/* Top Bar Right: Currency, Active Socials, Active Wishlist, Profile */}
+            {/* Top Bar Right: Currency, Socials, Wishlist & Profile */}
             <div className="flex items-center gap-5">
-              {/* Currency Dropdown */}
               <CurrencyDropdown />
 
-              {/* ★ Active Social Links */}
               <div className="flex items-center gap-3 border-l border-r border-white/10 px-4">
                 {socialLinks.map((social) => (
                   <a
@@ -130,11 +129,22 @@ function Navbar() {
                 ))}
               </div>
 
-              {/* ★ Active Wishlist, Notifications & Profile */}
               <div className="flex items-center gap-3">
-                <WishlistButton count={wishlistCount} onClick={handleWishlistClick} />
+                <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
                 <NotificationDropdown />
-                <ProfileDropdown />
+                
+                {/* CONDITIONAL TOP BAR RENDER: Sync user state */}
+                {user ? (
+                  <ProfileDropdown />
+                ) : (
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-[#A3D13A] hover:text-[#064824] transition-all cursor-pointer border border-white/5"
+                  >
+                    <FaSignInAlt className="text-[10px]" />
+                    <span>Sign In</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -147,24 +157,12 @@ function Navbar() {
             w-full
             transition-all
             duration-300
-            ${
-              isSticky
-                ? "bg-[#0B7A3E]/95 backdrop-blur-xl shadow-2xl"
-                : "bg-[#0B7A3E]"
-            }
+            ${isSticky ? "bg-[#0B7A3E]/95 backdrop-blur-xl shadow-2xl" : "bg-[#0B7A3E]"}
           `}
         >
           <div className="max-w-[1320px] mx-auto px-5 xl:px-0">
-            <div
-              className={`
-                flex
-                items-center
-                justify-between
-                transition-all
-                duration-300
-                ${isSticky ? "h-[75px]" : "h-[85px]"}
-              `}
-            >
+            <div className={`flex items-center justify-between transition-all duration-300 ${isSticky ? "h-[75px]" : "h-[85px]"}`}>
+              
               {/* Logo */}
               <Logo />
 
@@ -173,8 +171,25 @@ function Navbar() {
                 <DesktopMenu />
               </div>
 
-              {/* Desktop CTA & Search */}
+              {/* Desktop CTA, Search & Shopping Cart */}
               <div className="hidden lg:flex items-center gap-4">
+                
+                {/* Shopping Cart Button */}
+                <button
+                  type="button"
+                  onClick={handleCartClick}
+                  className="relative p-2.5 rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer group"
+                  aria-label="Cart"
+                >
+                  <FaShoppingCart className="text-base group-hover:scale-110 transition-transform" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
+                    </span>
+                  )}
+                </button>
+
+                {/* Search Button */}
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
@@ -184,11 +199,35 @@ function Navbar() {
                   <FaSearch className="text-base" />
                 </button>
 
-                <CTAButton />
+                {/* CONDITIONAL MAIN NAVBAR RENDER */}
+                {user ? (
+                  <div className="hidden md:block lg:hidden">
+                    <ProfileDropdown />
+                  </div>
+                ) : (
+                  <CTAButton />
+                )}
               </div>
 
-              {/* Mobile Actions & Hamburger */}
+              {/* ==================== 3. MOBILE ACTIONS & HAMBURGER ==================== */}
               <div className="flex items-center gap-3 lg:hidden">
+                
+                {/* Mobile Shopping Cart */}
+                <button
+                  type="button"
+                  onClick={handleCartClick}
+                  className="relative p-2 rounded-full hover:bg-white/10 text-white transition-colors cursor-pointer"
+                  aria-label="Cart"
+                >
+                  <FaShoppingCart className="text-lg" />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[9px] font-extrabold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-md">
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
+                    </span>
+                  )}
+                </button>
+
+                {/* Mobile Search */}
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
@@ -199,26 +238,35 @@ function Navbar() {
                 </button>
 
                 {/* Mobile Active Wishlist */}
-                <WishlistButton count={wishlistCount} onClick={handleWishlistClick} />
+                <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
 
+                {/* Mobile Profile Icon Status */}
+                {user && (
+                  <div className="scale-90">
+                    <ProfileDropdown />
+                  </div>
+                )}
+
+                {/* Hamburger Trigger Button */}
                 <HamburgerButton
                   isOpen={mobileMenuOpen}
                   setIsOpen={setMobileMenuOpen}
                 />
               </div>
+
             </div>
           </div>
 
           {/* Bottom Accent Line */}
           <div className="h-[3px] bg-gradient-to-r from-[#A3D13A] via-[#C6E86C] to-[#A3D13A]" />
         </div>
-
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* ==================== 4. GLOBAL INJECTIONS (OUTSIDE HEADER) ==================== */}
+      {/* FIXED: Passed correct prop 'setIsOpen' matching MobileMenu.jsx expectations */}
       <MobileMenu
         isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        setIsOpen={setMobileMenuOpen}
       />
 
       {/* Global Search Modal */}

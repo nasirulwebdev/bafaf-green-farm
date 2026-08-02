@@ -1,14 +1,17 @@
 /*
 ===========================================
 File Path      : Src/Components/Navbar/ProfileDropdown.jsx
-Component Name : ProfileDropdown
+Component Name : ProfileDropdown (Live Firebase Sync)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
 */
 
+// Location: src/components/Navbar/ProfileDropdown.jsx
+// Part 1: Synced Navigation Logic with Original Tailwind UI Styling
+
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   FaUser, 
   FaShoppingBag, 
@@ -17,12 +20,15 @@ import {
   FaSignOutAlt, 
   FaChevronDown 
 } from "react-icons/fa";
+import { useAuth } from "../../Context/AuthContext"; // 🟢 গ্লোবাল অথ হুক কল করা হলো
 
 function ProfileDropdown() {
+  const { user, logout } = useAuth(); // 🟢 লাইভ ফায়ারবেস অবজেক্ট ডিক্লেয়ার করা হলো
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown on outside click
+  // Outside ক্লিকের মাধ্যমে ড্রপডাউন অফ করার মেথড
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,12 +39,49 @@ function ProfileDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 🟢 ৪MD৪ এরর ফিক্স করার জন্য কাস্টম প্রিমিয়াম ন্যাভিগেশন হ্যান্ডলার
+  const handleItemClick = (label) => {
+    setIsOpen(false); // ক্লিক করার পর ড্রপডাউন বন্ধ হবে
+    
+    if (label === "My Profile") {
+      navigate("/profile", { state: { targetTab: "profile" } });
+    } else if (label === "My Orders") {
+      // ইন্টারন্যাশনাল বেস্ট প্র্যাকটিস: যেহেতু অর্ডার খালি, সরাসরি শপিং/প্রোডাক্ট পেজে রিডাইরেক্ট হবে
+      navigate("/products"); 
+    } else if (label === "Wishlist") {
+      navigate("/profile", { state: { targetTab: "wishlist" } });
+    } else if (label === "Account Settings") {
+      // সরাসরি প্রোফাইল ড্যাশবোর্ডের ভেতর একাউন্ট সেটিংস ট্যাবটি ওপেন করবে
+      navigate("/profile", { state: { targetTab: "settings" } });
+    }
+  };
+
   const profileMenuItems = [
-    { label: "My Profile", path: "/profile", icon: <FaUser /> },
-    { label: "My Orders", path: "/orders", icon: <FaShoppingBag /> },
-    { label: "Wishlist", path: "/wishlist", icon: <FaHeart /> },
-    { label: "Account Settings", path: "/settings", icon: <FaCog /> },
+    { label: "My Profile", icon: <FaUser /> },
+    { label: "My Orders", icon: <FaShoppingBag /> },
+    { label: "Wishlist", icon: <FaHeart /> },
+    { label: "Account Settings", icon: <FaCog /> },
   ];
+
+  // 🟢 ফায়ারবেস সাইন আউট ফাংশন
+  const handleLogout = async () => {
+    setIsOpen(false);
+    await logout();
+    navigate("/"); // লগআউটের পর রিডাইরেক্ট করে হোম পেজে নিয়ে যাবে
+  };
+
+  // ইউজার অবজেক্ট ব্যাকআপ প্রোটেকশন
+  if (!user) return null;
+
+  // ইউজারের নামের প্রথম দুই অক্ষরের আদ্যক্ষর (Initials) বের করার লজিক
+  const getInitials = (name) => {
+    if (!name) return "U";
+    const parts = name.split(" ");
+    if (parts.length >= 2) {
+      return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -46,17 +89,21 @@ function ProfileDropdown() {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
+        className="flex items-center gap-2 p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer text-white"
       >
-        <div className="w-9 h-9 rounded-full bg-[#A3D13A] border-2 border-white flex items-center justify-center text-[#0B7A3E] font-bold text-sm shadow-md">
-          JD
+        <div className="w-8 h-8 rounded-full bg-[#A3D13A] border border-white/20 flex items-center justify-center text-[#064824] font-black text-xs shadow-sm uppercase">
+          {getInitials(user.name)}
         </div>
         <div className="hidden lg:flex flex-col text-left">
-          <span className="text-xs font-bold text-white leading-none">John Doe</span>
-          <span className="text-[10px] text-white/70">Customer</span>
+          <span className="text-[11px] font-black leading-none uppercase tracking-wide text-white">
+            {user.name}
+          </span>
+          <span className="text-[9px] text-[#A3D13A] font-bold uppercase tracking-wider mt-0.5">
+            Verified User
+          </span>
         </div>
         <FaChevronDown
-          className={`text-white text-[10px] transition-transform duration-300 ${
+          className={`text-white text-[9px] transition-transform duration-300 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
@@ -64,44 +111,46 @@ function ProfileDropdown() {
 
       {/* Profile Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-fadeIn text-gray-800">
+        <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-fadeIn text-gray-800">
+          
           {/* Header User Info */}
           <div className="px-4 pb-3 mb-2 border-b border-gray-100 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#0B7A3E] text-white font-bold flex items-center justify-center text-base">
-              JD
+            <div className="w-10 h-10 rounded-full bg-[#0B7A3E] text-white font-black flex items-center justify-center text-sm uppercase">
+              {getInitials(user.name)}
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-gray-800 leading-snug">John Doe</h4>
-              <p className="text-xs text-gray-500">john.doe@example.com</p>
+            <div className="truncate text-left">
+              <h4 className="text-xs font-black text-gray-900 leading-snug truncate uppercase tracking-wide">
+                {user.name}
+              </h4>
+              <p className="text-[11px] text-gray-400 font-medium truncate mt-0.5">
+                {user.email}
+              </p>
             </div>
           </div>
 
-          {/* Links */}
-          <div className="flex flex-col px-2">
+          {/* Dynamic Links Panel */}
+          <div className="flex flex-col px-2 space-y-0.5">
             {profileMenuItems.map((item, index) => (
-              <Link
+              <button
                 key={index}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-colors"
+                type="button"
+                onClick={() => handleItemClick(item.label)}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-all duration-200 uppercase tracking-wide text-left cursor-pointer"
               >
-                <span className="text-[#0B7A3E] text-sm">{item.icon}</span>
+                <span className="text-[#0B7A3E] text-sm shrink-0">{item.icon}</span>
                 <span>{item.label}</span>
-              </Link>
+              </button>
             ))}
           </div>
 
-          {/* Logout Button */}
+          {/* Secure Logout Action Button */}
           <div className="mt-2 pt-2 border-t border-gray-100 px-2">
             <button
               type="button"
-              onClick={() => {
-                setIsOpen(false);
-                alert("Logging out...");
-              }}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-all duration-200 cursor-pointer uppercase tracking-wide text-left"
             >
-              <FaSignOutAlt className="text-sm" />
+              <FaSignOutAlt className="text-sm shrink-0" />
               <span>Log Out</span>
             </button>
           </div>

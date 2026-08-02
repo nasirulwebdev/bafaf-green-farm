@@ -1,7 +1,7 @@
 /*
 ===========================================
 File Path      : Src/Components/Products/Products.jsx
-Component Name : Products
+Component Name : Products (Part 01)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
@@ -9,14 +9,17 @@ Framework      : React 19 + Vite
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useApp } from "@/Context/AppContext";
+
+// 🟢 ইম্পোর্ট পাথ ১০০% প্রফেশনাল ও স্ট্যান্ডার্ড করতে আপেক্ষিক (Relative) সঠিক পাথ ব্যবহার করা হলো
 import FishFarming from './FishFarming';
 import AgroProducts from './AgroProducts';
 import RiceProduction from './RiceProduction';
 
 export default function Products() {
-  // টাইপ এরর ফিক্স করতে সরাসরি রিয়্যাক্ট রাউটারের স্ট্যান্ডার্ড ডিডিলেয়ারিং ব্যবহার করা হলো
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('fisheries');
+  const { wishlist, cart } = useApp();
 
   // মেইন মেনু ড্রপডাউন থেকে আসা কুয়েরি প্যারামিটার (?tab=...) রিড করার জন্য useEffect
   useEffect(() => {
@@ -34,13 +37,15 @@ export default function Products() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      {/* আপনার মেগা মেনুর স্ক্রিনশট অনুযায়ী ৩টি মূল ক্যাটাগরির ট্যাব বাটন */}
+      {/* ৩টি মূল ক্যাটাগরির ট্যাব বাটন */}
       <div className="flex flex-wrap justify-center gap-4 mb-12">
         <button
           onClick={() => handleTabChange('fisheries')}
           onMouseEnter={() => handleTabChange('fisheries')}
           className={`px-6 py-3.5 rounded-xl font-semibold text-sm md:text-base transition-all duration-300 flex items-center gap-2 shadow-sm cursor-pointer ${
-            activeTab === 'fisheries' ? 'bg-[#0b3c25] text-white shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            activeTab === 'fisheries' 
+              ? 'bg-[#0b3c25] text-white shadow-lg scale-105' 
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
           }`}
         >
           🐟 Fish Culture & Fisheries
@@ -50,7 +55,9 @@ export default function Products() {
           onClick={() => handleTabChange('agro')}
           onMouseEnter={() => handleTabChange('agro')}
           className={`px-6 py-3.5 rounded-xl font-semibold text-sm md:text-base transition-all duration-300 flex items-center gap-2 shadow-sm cursor-pointer ${
-            activeTab === 'agro' ? 'bg-[#0b3c25] text-white shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            activeTab === 'agro' 
+              ? 'bg-[#0b3c25] text-white shadow-lg scale-105' 
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
           }`}
         >
           🌾 Agro & Bio Products
@@ -60,7 +67,9 @@ export default function Products() {
           onClick={() => handleTabChange('rice')}
           onMouseEnter={() => handleTabChange('rice')}
           className={`px-6 py-3.5 rounded-xl font-semibold text-sm md:text-base transition-all duration-300 flex items-center gap-2 shadow-sm cursor-pointer ${
-            activeTab === 'rice' ? 'bg-[#0b3c25] text-white shadow-lg scale-105' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+            activeTab === 'rice' 
+              ? 'bg-[#0b3c25] text-white shadow-lg scale-105' 
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
           }`}
         >
           🌾 Crops & Grains

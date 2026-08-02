@@ -1,11 +1,5 @@
-/*
-===========================================
-File Path      : Src/Pages/Services/ServiceDetails.jsx
-Component Name : ServiceDetails
-Project        : BAFAF Green Farm
-Framework      : React 19 + Vite
-===========================================
-*/
+// File Path: Src/Pages/Services/ServiceDetails.jsx
+// PART 01: Imports, Fixed Dynamic Group-Image Lookup & Premium Banner Setup
 
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { servicesData } from '../../Data/Services';
@@ -25,24 +19,73 @@ export default function ServiceDetails() {
 
   // ৩টি ক্যাটাগরির ডাটা একত্র করে নির্দিষ্ট slug-এর ডাটা খুঁজে বের করা হচ্ছে
   const allServices = [
-    ...servicesData.fisheries,
-    ...servicesData.agro,
-    ...servicesData.training
+    ...(servicesData?.fisheries || []),
+    ...(servicesData?.agro || []),
+    ...(servicesData?.training || [])
   ];
   
-  const service = allServices.find((item) => item.slug === slug);
+  let service = allServices.find((item) => item.slug === slug);
 
-  // যদি কোনো কারণে ইউজার ভুল ইউআরএল-এ আসে, তবে একটি সুন্দর নট ফাউন্ড স্ক্রিন দেখাবে
+  // 🟢 FIXED AUTOMATIC LOOKUP: ডাটা ফাইলে সাব-ক্যাটাগরি কন্টেন্ট মিসিং থাকলে প্যারেন্ট গ্রুপের ইমেজ রেন্ডার করবে
   if (!service) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Service Not Found</h2>
-        <p className="text-gray-600 mb-6">The service you are looking for does not exist or has been moved.</p>
-        <button onClick={() => navigate('/services')} className="bg-[#0b3c25] text-white px-6 py-2.5 rounded-xl font-medium hover:bg-emerald-800 transition-colors flex items-center gap-2">
-          <FaArrowLeft size={14} /> Back to Services
-        </button>
-      </div>
-    );
+    const fallbackTitle = slug
+      ?.split("-")
+      ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      ?.join(" ") || "Premium Agro Service";
+
+    // ডিফল্ট নিরাপদ ব্যাকআপ ইমেজ
+    let groupImage = "https://unsplash.com"; 
+    
+    // 🛠️ নিখুঁত কিওয়ার্ড ম্যাট্রিক্স যাতে ৪টি নির্দিষ্ট স্লাগও গ্রুপ ইমেজ পেয়ে যায়
+    const isFisheriesGroup = 
+      slug.includes("pond") || 
+      slug.includes("fish") || 
+      slug.includes("hatchery") || 
+      slug.includes("aquaculture") || 
+      slug.includes("feed") || 
+      slug.includes("water") || 
+      slug.includes("shrimp") || 
+      slug.includes("prawn");
+
+    const isAgroGroup = 
+      slug.includes("soil") || 
+      slug.includes("crop") || 
+      slug.includes("farm") || 
+      slug.includes("irrigation") || 
+      slug.includes("rice") || 
+      slug.includes("greenhouse") || 
+      slug.includes("harvest") || 
+      slug.includes("supply") || 
+      slug.includes("export");
+
+    const isTrainingGroup = 
+      slug.includes("training") || 
+      slug.includes("biofloc") || 
+      slug.includes("project") || 
+      slug.includes("iot") || 
+      slug.includes("pest");
+
+    if (isFisheriesGroup) {
+      groupImage = servicesData?.fisheries?.[0]?.image || groupImage;
+    } else if (isAgroGroup) {
+      groupImage = servicesData?.agro?.[0]?.image || groupImage;
+    } else if (isTrainingGroup) {
+      groupImage = servicesData?.training?.[0]?.image || groupImage;
+    }
+
+    service = {
+      slug: slug,
+      title: fallbackTitle,
+      desc: `We provide specialized, high-efficiency commercial support and professional solution pipeline for ${fallbackTitle}. Our systems combine sustainable ecological framework with advanced agricultural technology.`,
+      icon: "🌱",
+      image: groupImage, // 🟢 ডাটা ফাইলের ক্যাটাগরিতে যে ইমেজ ছিল এখন সেটাই সফলভাবে শো করবে
+      features: [
+        "Expert On-Site Consultation",
+        "Advanced Technology Integration",
+        "Eco-Friendly & Sustainable Management",
+        "Comprehensive Property Assessment"
+      ]
+    };
   }
 
   return (
@@ -50,14 +93,15 @@ export default function ServiceDetails() {
       
       {/* 🟢 ১. প্রিমিয়াম হিরো ব্যানার (ডার্ক ওভারলে ও গ্লাস ইফেক্ট) */}
       <div 
-        className="relative h-[300px] md:h-[450px] bg-cover bg-center flex items-center"
+        className="relative h-[300px] md:h-[450px] bg-cover bg-center flex items-center select-none"
         style={{ backgroundImage: `linear-gradient(rgba(6, 40, 24, 0.85), rgba(11, 60, 37, 0.75)), url(${service.image})` }}
       >
         <div className="max-w-7xl mx-auto w-full px-4 mt-8">
           {/* ব্যাক বাটন */}
           <button 
+            type="button"
             onClick={() => navigate(-1)} 
-            className="inline-flex items-center gap-2 text-white/80 hover:text-[#ec2d07] font-semibold text-sm mb-6 transition-colors group cursor-pointer"
+            className="inline-flex items-center gap-2 text-white/80 hover:text-[#A3D13A] font-semibold text-sm mb-6 transition-colors group cursor-pointer"
           >
             <FaArrowLeft className="group-hover:-translate-x-1 transition-transform" /> Back to Previous
           </button>
@@ -84,7 +128,7 @@ export default function ServiceDetails() {
         <div className="lg:col-span-8 flex flex-col gap-8">
           
           {/* বড় ইমেজ ও পরিচিতি */}
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 select-none">
             <img 
               src={service.image} 
               alt={service.title} 
@@ -100,7 +144,7 @@ export default function ServiceDetails() {
           </div>
 
           {/* প্রফেশনাল ইনফোগ্রাফিক স্টাইল ফিচার গ্রিড */}
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 select-none">
             <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-6">Key Benefits & Project Deliverables</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
@@ -121,7 +165,7 @@ export default function ServiceDetails() {
         </div>
 
         {/* 🔹 ডানদিকের কলাম: স্টিকি সাইডবার অ্যাকশন উইজেটস (col-span-4) */}
-        <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-[100px] h-fit">
+        <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky lg:top-[100px] h-fit select-none">
           
           {/* উইজেট ১: কুইক বুকিং ফর্ম / অ্যাকশন কার্ড */}
           <div className="bg-gradient-to-br from-[#0b3c25] to-emerald-950 text-white rounded-3xl p-6 shadow-xl border border-white/5 relative overflow-hidden">
@@ -130,10 +174,10 @@ export default function ServiceDetails() {
               <p className="text-xs text-emerald-100/80 mb-6 leading-relaxed">Book a personalized, one-on-one digital or physical consultation session with our senior experts today.</p>
               
               <div className="flex flex-col gap-3">
-                <a href="tel:+8801700000000" className="w-full flex items-center justify-center gap-2 bg-[#A3D13A] text-[#0b3c25] py-3 rounded-xl font-bold text-sm hover:bg-white transition-all duration-300 shadow-md">
+                <a href="tel:+8801750909833" className="w-full flex items-center justify-center gap-2 bg-[#A3D13A] text-[#0b3c25] py-3 rounded-xl font-bold text-sm hover:bg-white hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-md">
                   <FaPhoneAlt size={12} /> Call Now For Inquiry
                 </a>
-                <a href="mailto:info@bafafgreenfarm.com" className="w-full flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md text-white py-3 rounded-xl font-bold text-sm hover:bg-white/20 transition-all duration-300 border border-white/10">
+                <a href="mailto:info@bafafgreenfarm.com" className="w-full flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md text-white py-3 rounded-xl font-bold text-sm hover:bg-white/20 hover:scale-[1.02] active:scale-95 transition-all duration-300 border border-white/10">
                   <FaEnvelope size={12} /> Send Email Booking
                 </a>
               </div>
@@ -167,7 +211,7 @@ export default function ServiceDetails() {
           {/* উইজেট ৩: ডকুমেন্টেশন বা ব্রোশার ডাউনলোড */}
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <h4 className="font-bold text-gray-900 mb-3 text-[15px]">Service Resources</h4>
-            <button className="w-full flex items-center justify-between p-3.5 bg-gray-50 hover:bg-emerald-50 rounded-xl group border border-gray-100 hover:border-emerald-200 transition-all cursor-pointer">
+            <button type="button" className="w-full flex items-center justify-between p-3.5 bg-gray-50 hover:bg-emerald-50 rounded-xl group border border-gray-100 hover:border-emerald-200 transition-all cursor-pointer">
               <span className="flex items-center gap-3">
                 <FaFilePdf className="text-red-500 text-lg" />
                 <span className="text-xs font-bold text-gray-700 group-hover:text-[#0B7A3E] transition-colors">Download Brochure .PDF</span>
