@@ -1,7 +1,7 @@
 /*
 ===========================================
 File Path      : Src/Components/Navbar/Navbar.jsx
-Component Name : Navbar (Part 01 - Active Wishlist Fixed)
+Component Name : Navbar (Auth State Integrated)
 Project        : BAFAF Green Farm
 Framework      : React 19 + Vite
 ===========================================
@@ -19,10 +19,12 @@ import {
   FaInstagram, 
   FaLinkedinIn, 
   FaSearch,
-  FaShoppingCart 
+  FaShoppingCart,
+  FaSignInAlt 
 } from "react-icons/fa";
 
 import { useApp } from "../../Context/AppContext";
+import { useAuth } from "../../Context/AuthContext"; // 🟢 গ্লোবাল ফায়ারবেস অথ হুক ইমপোর্ট করা হলো
 import Logo from "./Logo";
 import DesktopMenu from "./DesktopMenu";
 import CTAButton from "./CTAButton";
@@ -38,6 +40,7 @@ import SearchModal from "./SearchModal";
 
 function Navbar() {
   const { cart, wishlist } = useApp();
+  const { user } = useAuth(); // 🟢 ফায়ারবেস ইউজার লাইভ স্টেট অবজেক্ট কল করা হলো
   const navigate = useNavigate(); 
   const [isSticky, setIsSticky] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -74,7 +77,6 @@ function Navbar() {
     };
   }, [mobileMenuOpen]);
 
-  // 🟢 উইশলিস্ট আইকন ক্লিকে উইশলিস্ট ডিটেইলস পেইজে নিয়ে যাওয়ার লজিক যুক্ত করা হলো
   const handleWishlistClick = () => {
     navigate("/wishlist");
   };
@@ -82,7 +84,6 @@ function Navbar() {
   const handleCartClick = () => {
     navigate("/cart"); 
   };
-
 
   return (
     <>
@@ -132,7 +133,19 @@ function Navbar() {
               <div className="flex items-center gap-3">
                 <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
                 <NotificationDropdown />
-                <ProfileDropdown />
+                
+                {/* 🟢 CONDITIONAL TOP BAR RENDER: ইউজার স্টেট অনুযায়ী বোতাম সিঙ্ক */}
+                {user ? (
+                  <ProfileDropdown />
+                ) : (
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-white/10 text-white text-[11px] font-bold uppercase tracking-wider hover:bg-[#A3D13A] hover:text-[#064824] transition-all cursor-pointer border border-white/5"
+                  >
+                    <FaSignInAlt className="text-[10px]" />
+                    <span>Sign In</span>
+                  </button>
+                )}
               </div>
             </div>
 
@@ -162,7 +175,7 @@ function Navbar() {
               {/* Desktop CTA, Search & Shopping Cart */}
               <div className="hidden lg:flex items-center gap-4">
                 
-                {/* 🛒 SEARCH BAR-এর ঠিক সামনে শপিং কার্ট বাটন যুক্ত করা হলো */}
+                {/* SEARCH BAR-এর ঠিক সামনে শপিং কার্ট বাটন যুক্ত করা হলো */}
                 <button
                   type="button"
                   onClick={handleCartClick}
@@ -172,7 +185,7 @@ function Navbar() {
                   <FaShoppingCart className="text-base group-hover:scale-110 transition-transform" />
                   {cart.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center shadow-md animate-pulse">
-                      {cart.length}
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
                     </span>
                   )}
                 </button>
@@ -187,7 +200,14 @@ function Navbar() {
                   <FaSearch className="text-base" />
                 </button>
 
-                <CTAButton />
+                {/* 🟢 CONDITIONAL MAIN NAVBAR RENDER */}
+                {user ? (
+                  <div className="hidden md:block lg:hidden">
+                    <ProfileDropdown />
+                  </div>
+                ) : (
+                  <CTAButton />
+                )}
               </div>
 
               {/* Mobile Actions & Hamburger */}
@@ -203,7 +223,7 @@ function Navbar() {
                   <FaShoppingCart className="text-lg" />
                   {cart.length > 0 && (
                     <span className="absolute -top-1 -right-1 bg-[#A3D13A] text-[#064824] text-[9px] font-extrabold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-md">
-                      {cart.length}
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
                     </span>
                   )}
                 </button>
@@ -220,6 +240,13 @@ function Navbar() {
                 {/* Mobile Active Wishlist */}
                 <WishlistButton count={wishlist.length} onClick={handleWishlistClick} />
 
+                {/* 🟢 Mobile Profile Icon Status */}
+                {user && (
+                  <div className="scale-90">
+                    <ProfileDropdown />
+                  </div>
+                )}
+
                 <HamburgerButton
                   isOpen={mobileMenuOpen}
                   setIsOpen={setMobileMenuOpen}
@@ -234,19 +261,15 @@ function Navbar() {
 
       </header>
 
-      {/* Mobile Drawer Menu */}
-      <MobileMenu
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
-      />
-
-      {/* Global Search Modal */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={() => setIsSearchOpen(false)}
-      />
-    </>
-  );
-}
-
-export default Navbar;
+    {/* Mobile Drawer Menu */}
+    <MobileMenu
+    isOpen={mobileMenuOpen}
+    onClose={() => setMobileMenuOpen(false)}/>
+    {/* Global Search Modal */}
+    <SearchModal
+    isOpen={isSearchOpen}
+    onClose={() => setIsSearchOpen(false)}/>
+    </>);}
+    
+    
+    export default Navbar;

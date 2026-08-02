@@ -16,6 +16,7 @@ import Contact from "@/Pages/Contact/Contact";
 import NotFound from "@/Pages/NotFound/NotFound";
 import CartDetails from "../Pages/Cart/CartDetails";
 import WishlistDetails from "../Pages/Wishlist/WishlistDetails";
+import AuthPage from "../Pages/Auth/AuthPage";
 
 function AppRoutes() {
     return (
@@ -43,7 +44,11 @@ function AppRoutes() {
                 <Route path="contact" element={<Contact />} />
 
                 <Route path="cart" element={<CartDetails />} />
+
                 <Route path="wishlist" element={<WishlistDetails />} />
+
+                <Route path="login" element={<AuthPage />} />
+                
             </Route>
 
             <Route path="*" element={<NotFound />} />
