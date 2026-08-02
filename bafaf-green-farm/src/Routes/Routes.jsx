@@ -17,6 +17,7 @@ import NotFound from "@/Pages/NotFound/NotFound";
 import CartDetails from "../Pages/Cart/CartDetails";
 import WishlistDetails from "../Pages/Wishlist/WishlistDetails";
 import AuthPage from "../Pages/Auth/AuthPage";
+import ProfileDashboard from "../Pages/Dashboard/ProfileDashboard";
 
 function AppRoutes() {
     return (
@@ -49,6 +50,7 @@ function AppRoutes() {
 
                 <Route path="login" element={<AuthPage />} />
                 
+                <Route path="/profile" element={<ProfileDashboard />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

@@ -7,8 +7,11 @@ Framework      : React 19 + Vite
 ===========================================
 */
 
+// Location: src/components/Navbar/ProfileDropdown.jsx
+// Part 1: Synced Navigation Logic with Original Tailwind UI Styling
+
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   FaUser, 
   FaShoppingBag, 
@@ -17,7 +20,7 @@ import {
   FaSignOutAlt, 
   FaChevronDown 
 } from "react-icons/fa";
-import { useAuth } from "../../Context/AuthContext"; // 🟢 গলোবাল অথ হুক কল করা হলো
+import { useAuth } from "../../Context/AuthContext"; // 🟢 গ্লোবাল অথ হুক কল করা হলো
 
 function ProfileDropdown() {
   const { user, logout } = useAuth(); // 🟢 লাইভ ফায়ারবেস অবজেক্ট ডিক্লেয়ার করা হলো
@@ -36,11 +39,28 @@ function ProfileDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // 🟢 ৪MD৪ এরর ফিক্স করার জন্য কাস্টম প্রিমিয়াম ন্যাভিগেশন হ্যান্ডলার
+  const handleItemClick = (label) => {
+    setIsOpen(false); // ক্লিক করার পর ড্রপডাউন বন্ধ হবে
+    
+    if (label === "My Profile") {
+      navigate("/profile", { state: { targetTab: "profile" } });
+    } else if (label === "My Orders") {
+      // ইন্টারন্যাশনাল বেস্ট প্র্যাকটিস: যেহেতু অর্ডার খালি, সরাসরি শপিং/প্রোডাক্ট পেজে রিডাইরেক্ট হবে
+      navigate("/products"); 
+    } else if (label === "Wishlist") {
+      navigate("/profile", { state: { targetTab: "wishlist" } });
+    } else if (label === "Account Settings") {
+      // সরাসরি প্রোফাইল ড্যাশবোর্ডের ভেতর একাউন্ট সেটিংস ট্যাবটি ওপেন করবে
+      navigate("/profile", { state: { targetTab: "settings" } });
+    }
+  };
+
   const profileMenuItems = [
-    { label: "My Profile", path: "/profile", icon: <FaUser /> },
-    { label: "My Orders", path: "/orders", icon: <FaShoppingBag /> },
-    { label: "Wishlist", path: "/wishlist", icon: <FaHeart /> },
-    { label: "Account Settings", path: "/settings", icon: <FaCog /> },
+    { label: "My Profile", icon: <FaUser /> },
+    { label: "My Orders", icon: <FaShoppingBag /> },
+    { label: "Wishlist", icon: <FaHeart /> },
+    { label: "Account Settings", icon: <FaCog /> },
   ];
 
   // 🟢 ফায়ারবেস সাইন আউট ফাংশন
@@ -111,15 +131,15 @@ function ProfileDropdown() {
           {/* Dynamic Links Panel */}
           <div className="flex flex-col px-2 space-y-0.5">
             {profileMenuItems.map((item, index) => (
-              <Link
+              <button
                 key={index}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-all duration-200 uppercase tracking-wide text-left"
+                type="button"
+                onClick={() => handleItemClick(item.label)}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:text-[#0B7A3E] hover:bg-[#0B7A3E]/5 transition-all duration-200 uppercase tracking-wide text-left cursor-pointer"
               >
                 <span className="text-[#0B7A3E] text-sm shrink-0">{item.icon}</span>
                 <span>{item.label}</span>
-              </Link>
+              </button>
             ))}
           </div>
 
